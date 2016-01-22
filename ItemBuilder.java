@@ -4,9 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.*;
 import org.bukkit.material.MaterialData;
-import org.bukkit.plugin.PluginAwareness;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ItemBuilder API for creating ItemStack easy with just 1 line of code
+ * ItemBuilder API for creating ItemStacks easy with just 1 line of code
  * @author Acquized
  * @see ItemStack
  */
@@ -188,6 +187,29 @@ public class ItemBuilder {
     }
 
     /**
+     * Makes the Item (un-)breakable
+     * @param unbreakable (Boolean)
+     */
+    public ItemBuilder unbreakable(boolean unbreakable) {
+        meta.spigot().setUnbreakable(unbreakable);
+        return this;
+    }
+
+    /**
+     * Sets the Owner of the Skull
+     * This only affects if the Item is a SKULL_ITEM or a SKULL
+     * @param user (String)
+     */
+    public ItemBuilder owner(String user) {
+        if((material == Material.SKULL_ITEM) || (material == Material.SKULL)) {
+            SkullMeta smeta = (SkullMeta) meta;
+            smeta.setOwner(user);
+            meta = smeta;
+        }
+        return this;
+    }
+
+    /**
      * Builds the ItemStack and returns it
      * @return (ItemStack)
      */
@@ -214,4 +236,5 @@ public class ItemBuilder {
         item.setItemMeta(meta);
         return item;
     }
+    
 }
