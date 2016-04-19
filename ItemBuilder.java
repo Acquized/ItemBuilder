@@ -1,5 +1,7 @@
 package cc.acquized.itembuilder;
 
+import org.apache.commons.lang.Validate;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -35,6 +37,7 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material) {
+        Validate.notNull(material, "The Material is null.");
         this.material = material;
     }
 
@@ -43,6 +46,7 @@ public class ItemBuilder {
      * @see ItemStack
      */
     public ItemBuilder(ItemStack item) {
+        Validate.notNull(item, "The Item is null.");
         this.item = item;
         this.meta = item.getItemMeta();
         this.material = item.getType();
@@ -71,6 +75,7 @@ public class ItemBuilder {
      * @param data (MaterialData)
      */
     public ItemBuilder data(MaterialData data) {
+        Validate.notNull(data, "The Data is null.");
         this.data = data;
         return this;
     }
@@ -100,6 +105,7 @@ public class ItemBuilder {
      * @param material (Material)
      */
     public ItemBuilder material(Material material) {
+        Validate.notNull(material, "The Mater is null.");
         this.material = material;
         return this;
     }
@@ -109,6 +115,7 @@ public class ItemBuilder {
      * @param meta (ItemMeta)
      */
     public ItemBuilder meta(ItemMeta meta) {
+        Validate.notNull(meta, "The Meta is null.");
         this.meta = meta;
         return this;
     }
@@ -118,6 +125,7 @@ public class ItemBuilder {
      * @param enchant (Enchantment)
      */
     public ItemBuilder enchant(Enchantment enchant, int level) {
+        Validate.notNull(enchant, "The Enchantment is null.");
         enchantments.put(enchant, level);
         return this;
     }
@@ -127,6 +135,7 @@ public class ItemBuilder {
      * @param enchantments (Map<Enchantment, Integer> )
      */
     public ItemBuilder enchant(Map<Enchantment, Integer> enchantments) {
+        Validate.notNull(enchantments, "The Enchantments is null.");
         this.enchantments = enchantments;
         return this;
     }
@@ -136,7 +145,8 @@ public class ItemBuilder {
      * @param displayname (Displayname)
      */
     public ItemBuilder displayname(String displayname) {
-        this.displayname = displayname;
+        Validate.notNull(displayname, "The Displayname is null.");
+        this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
         return this;
     }
 
@@ -145,7 +155,8 @@ public class ItemBuilder {
      * @param line (String)
      */
     public ItemBuilder lore(String line) {
-        lore.add(line);
+        Validate.notNull(line, "The Line is null.");
+        lore.add(ChatColor.translateAlternateColorCodes('&', line));
         return this;
     }
 
@@ -154,6 +165,7 @@ public class ItemBuilder {
      * @param lore (List<String>)
      */
     public ItemBuilder lore(List<String> lore) {
+        Validate.notNull(lore, "The Lore is null.");
         this.lore = lore;
         return this;
     }
@@ -164,7 +176,8 @@ public class ItemBuilder {
      * @param count (Integer)
      */
     public ItemBuilder lore(String line, int count) {
-        lore.set(count, line);
+        Validate.notNull(line, "The Line is null.");
+        lore.set(count, ChatColor.translateAlternateColorCodes('&', line));
         return this;
     }
 
@@ -173,6 +186,7 @@ public class ItemBuilder {
      * @param flag (ItemFlag)
      */
     public ItemBuilder flag(ItemFlag flag) {
+        Validate.notNull(flag, "The Flag is null.");
         flags.add(flag);
         return this;
     }
@@ -182,6 +196,7 @@ public class ItemBuilder {
      * @param flags (List<ItemFlag>)
      */
     public ItemBuilder flag(List<ItemFlag> flags) {
+        Validate.notNull(flags, "The Flags are null.");
         this.flags = flags;
         return this;
     }
@@ -196,11 +211,21 @@ public class ItemBuilder {
     }
 
     /**
+     * Makes the Item Glow
+     */
+    public ItemBuilder glow() {
+        enchant(Enchantment.ARROW_INFINITE, 10);
+        flag(ItemFlag.HIDE_ENCHANTS);
+        return this;
+    }
+
+    /**
      * Sets the Owner of the Skull
      * This only affects if the Item is a SKULL_ITEM or a SKULL
      * @param user (String)
      */
     public ItemBuilder owner(String user) {
+        Validate.notNull(user, "The Username is null.");
         if((material == Material.SKULL_ITEM) || (material == Material.SKULL)) {
             SkullMeta smeta = (SkullMeta) meta;
             smeta.setOwner(user);
@@ -236,5 +261,5 @@ public class ItemBuilder {
         item.setItemMeta(meta);
         return item;
     }
-    
+
 }
