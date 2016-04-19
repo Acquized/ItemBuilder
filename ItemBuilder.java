@@ -34,7 +34,7 @@ public class ItemBuilder {
     private String displayname;
     private List<String> lore = new ArrayList<>();
     private List<ItemFlag> flags = new ArrayList<>();
-    private boolean andSymbol = false;
+    private boolean andSymbol = true;
 
     /**
      * Initials the ItemBuilder with the Material
