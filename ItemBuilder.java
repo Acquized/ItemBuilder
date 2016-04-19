@@ -20,6 +20,7 @@ import java.util.*;
  * @author Acquized (Main Methods & NBT)
  * @author Kev575 (More Constructors & a few Methods)
  * @see ItemStack
+ * @version 1.4
  */
 public class ItemBuilder {
 
@@ -33,6 +34,7 @@ public class ItemBuilder {
     private String displayname;
     private List<String> lore = new ArrayList<>();
     private List<ItemFlag> flags = new ArrayList<>();
+    private boolean andSymbol = false;
 
     /**
      * Initials the ItemBuilder with the Material
@@ -201,7 +203,10 @@ public class ItemBuilder {
      */
     public ItemBuilder displayname(String displayname) {
         Validate.notNull(displayname, "The Displayname is null.");
-        this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
+        if (replaceAnd)
+            this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
+        else
+            this.displayname = displayname;
         return this;
     }
 
@@ -211,7 +216,10 @@ public class ItemBuilder {
      */
     public ItemBuilder lore(String line) {
         Validate.notNull(line, "The Line is null.");
-        lore.add(ChatColor.translateAlternateColorCodes('&', line));
+        if (replaceAnd)
+            lore.add(ChatColor.translateAlternateColorCodes('&', line));
+        else
+            lore.add(line);
         return this;
     }
 
@@ -232,6 +240,13 @@ public class ItemBuilder {
      */
     public ItemBuilder lores(String... lines) {
         Validate.notNull(lines, "The Lines are null.");
+        for (String line : lines) {
+            if (replaceAnd) {
+                lore.add(ChatColor.translateAlternateColorCodes('&', line));
+            } else {
+                lore.add(line);
+            }
+        }
         lore.addAll(Arrays.asList(lines));
         return this;
     }
@@ -243,7 +258,10 @@ public class ItemBuilder {
      */
     public ItemBuilder lore(String line, int count) {
         Validate.notNull(line, "The Line is null.");
-        lore.set(count, ChatColor.translateAlternateColorCodes('&', line));
+        if (replaceAnd)
+            lore.set(count, ChatColor.translateAlternateColorCodes('&', line));
+        else
+            lore.set(count, line);
         return this;
     }
 
@@ -305,6 +323,24 @@ public class ItemBuilder {
      */
     public Unsafe unsafe() {
         return new Unsafe(this);
+    }
+    
+        /**
+     * Toggles the replace of the ampersand (&) symbol to the section sign (§) symbol
+     * @author Kev575
+     */
+    public ItemBuilder replaceAndSymbol() {
+        replaceAndSymbol(!andSymbol);
+        return this;
+    }
+    
+    /**
+     * Enables / disables the replace of the ampersand (&) symbol to the section sign (§) symbol
+     * @author Kev575
+     */
+    public ItemBuilder replaceAndSymbol(boolean replace) {
+        andSymbol = replace;
+        return this;
     }
 
     /**
@@ -590,5 +626,4 @@ public class ItemBuilder {
 
         }
     }
-
 }
