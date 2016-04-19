@@ -20,7 +20,7 @@ import java.util.*;
  * @author Acquized (Main Methods & NBT)
  * @author Kev575 (More Constructors & a few Methods)
  * @see ItemStack
- * @version 1.4
+ * @version 1.7
  */
 public class ItemBuilder {
 
