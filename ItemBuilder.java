@@ -9,14 +9,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.material.MaterialData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ItemBuilder API for creating ItemStacks easy with just 1 line of code
  * @author Acquized
+ * @author Kev575
  * @see ItemStack
  */
 public class ItemBuilder {
@@ -39,6 +37,27 @@ public class ItemBuilder {
     public ItemBuilder(Material material) {
         Validate.notNull(material, "The Material is null.");
         this.material = material;
+    }
+
+    /**
+     * Initials the ItemBuilder with the Material and the amount
+     * @author Kev575
+     * @see Material
+     */
+    public ItemBuilder(Material material, int amount) {
+        this.material = material;
+        this.amount = amount;
+    }
+
+    /**
+     * Initials the ItemBuilder with the Material, the amount and the displaname
+     * @author Kev575
+     * @see Material
+     */
+    public ItemBuilder(Material material, int amount, String displayname) {
+        this.material = material;
+        this.amount = amount;
+        this.displayname = displayname;
     }
 
     /**
@@ -113,6 +132,7 @@ public class ItemBuilder {
     /**
      * Sets the ItemMeta of the builded ItemStack
      * @param meta (ItemMeta)
+     * @param meta (ItemMeta)
      */
     public ItemBuilder meta(ItemMeta meta) {
         Validate.notNull(meta, "The Meta is null.");
@@ -167,6 +187,17 @@ public class ItemBuilder {
     public ItemBuilder lore(List<String> lore) {
         Validate.notNull(lore, "The Lore is null.");
         this.lore = lore;
+        return this;
+    }
+
+    /**
+     * Adds the lines to the Lore of the builded ItemStack
+     * @param lines (String...)
+     * @author Kev575
+     */
+    public ItemBuilder lores(String... lines) {
+        Validate.notNull(lines, "The Lines are null.");
+        lore.addAll(Arrays.asList(lines));
         return this;
     }
 
