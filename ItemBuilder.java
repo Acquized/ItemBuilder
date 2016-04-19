@@ -1,20 +1,24 @@
 package cc.acquized.itembuilder;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
 import org.bukkit.material.MaterialData;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
  * ItemBuilder API for creating ItemStacks easy with just 1 line of code
- * @author Acquized
- * @author Kev575
+ * @author Acquized (Main Methods & NBT)
+ * @author Kev575 (More Constructors & a few Methods)
  * @see ItemStack
  */
 public class ItemBuilder {
@@ -36,6 +40,7 @@ public class ItemBuilder {
      */
     public ItemBuilder(Material material) {
         Validate.notNull(material, "The Material is null.");
+        this.item = new ItemStack(material);
         this.material = material;
     }
 
@@ -45,6 +50,7 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material, int amount) {
+        this.item = new ItemStack(material, amount);
         this.material = material;
         this.amount = amount;
     }
@@ -55,8 +61,19 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material, int amount, String displayname) {
+        this.item = new ItemStack(material, amount);
         this.material = material;
         this.amount = amount;
+        this.displayname = displayname;
+    }
+
+    /**
+     * Initials the ItemBuilder with the Material and the displaname
+     * @see Material
+     */
+    public ItemBuilder(Material material, String displayname) {
+        this.item = new ItemStack(material);
+        this.material = material;
         this.displayname = displayname;
     }
 
@@ -78,6 +95,25 @@ public class ItemBuilder {
         for(ItemFlag f : item.getItemMeta().getItemFlags()) {
             flags.add(f);
         }
+    }
+
+    /**
+     * Initials the ItemBuilder with an already existing instance of the ItemBuilder
+     * @see ItemBuilder
+     */
+    public ItemBuilder(ItemBuilder builder) {
+        Validate.notNull(builder, "The ItemBuilder is null.");
+        this.item = builder.item;
+        this.meta = builder.meta;
+        this.material = builder.material;
+        this.amount = builder.amount;
+        this.damage = builder.damage;
+        this.data = builder.data;
+        this.damage = builder.damage;
+        this.enchantments = builder.enchantments;
+        this.displayname = builder.displayname;
+        this.lore = builder.lore;
+        this.flags = builder.flags;
     }
 
     /**
@@ -131,7 +167,6 @@ public class ItemBuilder {
 
     /**
      * Sets the ItemMeta of the builded ItemStack
-     * @param meta (ItemMeta)
      * @param meta (ItemMeta)
      */
     public ItemBuilder meta(ItemMeta meta) {
@@ -266,11 +301,20 @@ public class ItemBuilder {
     }
 
     /**
+     * Method to access all NBT Methods
+     */
+    public Unsafe unsafe() {
+        return new Unsafe(this);
+    }
+
+    /**
      * Builds the ItemStack and returns it
      * @return (ItemStack)
      */
     public ItemStack build() {
-        item = new ItemStack(material, amount, damage);
+        item.setType(material);
+        item.setAmount(amount);
+        item.setDurability(damage);
         meta = item.getItemMeta();
         if(data != null) {
             item.setData(data);
@@ -291,6 +335,260 @@ public class ItemBuilder {
         }
         item.setItemMeta(meta);
         return item;
+    }
+
+    /**
+     * This Methods are unsafe and should not be used when you don't know what they do. These methods can cause a corruption of the
+     * Players Inventory File when it contains a invalid Item and causes so that the PLayer can no longer join the World with the corrupted
+     * Inventory File.
+     * @author Acquized
+     * @since 1.5
+     */
+    public class Unsafe {
+
+        /** Don't access the ReflectionUtils Class using this field. Using methods from ReflectionUtils Class is not suggested and may cause a major plugin break. **/
+        protected final ReflectionUtils utils = new ReflectionUtils();
+        protected final ItemBuilder builder;
+
+        /**
+         * Initials the Unsafe Class with the ItemBuilder
+         * @param builder (ItemBuilder)
+         */
+        public Unsafe(ItemBuilder builder) {
+            this.builder = builder;
+        }
+
+        /**
+         * Sets a String in the Item NBT Compound
+         */
+        public void setString(String key, String value) {
+            builder.item = utils.setString(builder.item, key, value);
+        }
+
+        /**
+         * Gets a String from the Item NBT Compound
+         */
+        public String getString(String key) {
+            return utils.getString(builder.item, key);
+        }
+
+        /**
+         * Sets a Integer in the Item NBT Compound
+         */
+        public void setInt(String key, int value) {
+            builder.item = utils.setInt(builder.item, key, value);
+        }
+
+        /**
+         * Gets a Integer from the Item NBT Compound
+         */
+        public int getInt(String key) {
+            return utils.getInt(builder.item, key);
+        }
+
+        /**
+         * Sets a Double in the Item NBT Compound
+         */
+        public void setDouble(String key, double value) {
+            builder.item = utils.setDouble(builder.item, key, value);
+        }
+
+        /**
+         * Gets a Double from the Item NBT Compound
+         */
+        public double getDouble(String key) {
+            return utils.getDouble(builder.item, key);
+        }
+
+        /**
+         * Sets a Boolean in the Item NBT Compound
+         */
+        public void setBoolean(String key, boolean value) {
+            builder.item = utils.setBoolean(builder.item, key, value);
+        }
+
+        /**
+         * Gets a Boolean from the Item NBT Compound
+         */
+        public boolean getBoolean(String key) {
+            return utils.getBoolean(builder.item, key);
+        }
+
+        /**
+         * Checks if the Item NBT Compound contains the Key
+         */
+        public boolean containsKey(String key) {
+            return utils.hasKey(builder.item, key);
+        }
+
+        /**
+         * Accesses back the ItemBuilder Class and exits the Unsafe Class
+         * @return ItemBuilder
+         */
+        public ItemBuilder builder() {
+            return builder;
+        }
+
+        public class ReflectionUtils {
+
+            public String getString(ItemStack item, String key) {
+                Object compound = getNBTTagCompound(getItemAsNMSStack(item));
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    return (String) compound.getClass().getMethod("getString", String.class).invoke(compound, key);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return null;
+            }
+
+            public ItemStack setString(ItemStack item, String key, String value) {
+                Object nmsItem = getItemAsNMSStack(item);
+                Object compound = getNBTTagCompound(nmsItem);
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    compound.getClass().getMethod("setString", String.class, String.class).invoke(compound, key, value);
+                    nmsItem = setNBTTag(compound, nmsItem);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return getItemAsBukkitStack(nmsItem);
+            }
+
+            public int getInt(ItemStack item, String key) {
+                Object compound = getNBTTagCompound(getItemAsNMSStack(item));
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    return (Integer) compound.getClass().getMethod("getInt", String.class).invoke(compound, key);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return -1;
+            }
+
+            public ItemStack setInt(ItemStack item, String key, int value) {
+                Object nmsItem = getItemAsNMSStack(item);
+                Object compound = getNBTTagCompound(nmsItem);
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    compound.getClass().getMethod("setInt", String.class, Integer.class).invoke(compound, key, value);
+                    nmsItem = setNBTTag(compound, nmsItem);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return getItemAsBukkitStack(nmsItem);
+            }
+
+            public double getDouble(ItemStack item, String key) {
+                Object compound = getNBTTagCompound(getItemAsNMSStack(item));
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    return (Double) compound.getClass().getMethod("getDouble", String.class).invoke(compound, key);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return Double.NaN;
+            }
+
+            public ItemStack setDouble(ItemStack item, String key, double value) {
+                Object nmsItem = getItemAsNMSStack(item);
+                Object compound = getNBTTagCompound(nmsItem);
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    compound.getClass().getMethod("setDouble", String.class, Double.class).invoke(compound, key, value);
+                    nmsItem = setNBTTag(compound, nmsItem);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return getItemAsBukkitStack(nmsItem);
+            }
+
+            public boolean getBoolean(ItemStack item, String key) {
+                Object compound = getNBTTagCompound(getItemAsNMSStack(item));
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    return (Boolean) compound.getClass().getMethod("getBoolean", String.class).invoke(compound, key);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return false;
+            }
+
+            public ItemStack setBoolean(ItemStack item, String key, boolean value) {
+                Object nmsItem = getItemAsNMSStack(item);
+                Object compound = getNBTTagCompound(nmsItem);
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    compound.getClass().getMethod("setBoolean", String.class, Boolean.class).invoke(compound, key, value);
+                    nmsItem = setNBTTag(compound, nmsItem);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return getItemAsBukkitStack(nmsItem);
+            }
+
+            public boolean hasKey(ItemStack item, String key) {
+                Object compound = getNBTTagCompound(getItemAsNMSStack(item));
+                if(compound == null) {
+                    compound = getNewNBTTagCompound();
+                }
+                try {
+                    return (Boolean) compound.getClass().getMethod("hasKey", String.class).invoke(compound, key);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) { e.printStackTrace(); }
+                return false;
+            }
+
+            /** <!-- UNSAFE METHODS (DO NOT USE!) !--> **/
+            public Object getNewNBTTagCompound() {
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                try {
+                    return Class.forName("net.minecraft.server." + ver + ".NBTTagCompound").newInstance();
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ex) { ex.printStackTrace(); }
+                return null;
+            }
+
+            public Object setNBTTag(Object tag, Object item) {
+                try {
+                    item.getClass().getMethod("setTag", item.getClass()).invoke(item, tag);
+                    return item;
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return null;
+            }
+
+            public Object getNBTTagCompound(Object nmsStack) {
+                try {
+                    return nmsStack.getClass().getMethod("getTag").invoke(nmsStack);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) { ex.printStackTrace(); }
+                return null;
+            }
+
+            @SuppressWarnings("unchecked")
+            public Object getItemAsNMSStack(ItemStack item) {
+                try {
+                    Method m = getCraftItemStackClass().getMethod("asNMSCopy", ItemStack.class);
+                    return m.invoke(getCraftItemStackClass(), item);
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) { ex.printStackTrace(); }
+                return null;
+            }
+
+            @SuppressWarnings("unchecked")
+            public ItemStack getItemAsBukkitStack(Object nmsStack) {
+                try {
+                    Method m = getCraftItemStackClass().getMethod("asCraftMirror", nmsStack.getClass());
+                    return (ItemStack) m.invoke(getCraftItemStackClass(), nmsStack);
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) { ex.printStackTrace(); }
+                return null;
+            }
+
+            public Class getCraftItemStackClass() {
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                try {
+                    return Class.forName("org.bukkit.craftbukkit." + ver + ".inventory.CraftItemStack");
+                } catch (ClassNotFoundException ex) { ex.printStackTrace(); }
+                return null;
+            }
+
+        }
     }
 
 }
