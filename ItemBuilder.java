@@ -20,7 +20,7 @@ import java.util.*;
  * @author Acquized (Main Methods & NBT)
  * @author Kev575 (More Constructors & a few Methods)
  * @see ItemStack
- * @version 1.7
+ * @version 1.7.1
  */
 public class ItemBuilder {
 
@@ -52,6 +52,7 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material, int amount) {
+        Validate.notNull(material, "The Material is null.");
         this.item = new ItemStack(material, amount);
         this.material = material;
         this.amount = amount;
@@ -63,6 +64,8 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material, int amount, String displayname) {
+        Validate.notNull(material, "The Material is null.");
+        Validate.notNull(displayname, "The Displayname is null.");
         this.item = new ItemStack(material, amount);
         this.material = material;
         this.amount = amount;
@@ -74,6 +77,8 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material, String displayname) {
+        Validate.notNull(material, "The Material is null.");
+        Validate.notNull(displayname, "The Displayname is null.");
         this.item = new ItemStack(material);
         this.material = material;
         this.displayname = displayname;
@@ -203,7 +208,7 @@ public class ItemBuilder {
      */
     public ItemBuilder displayname(String displayname) {
         Validate.notNull(displayname, "The Displayname is null.");
-        if (replaceAnd)
+        if (andSymbol)
             this.displayname = ChatColor.translateAlternateColorCodes('&', displayname);
         else
             this.displayname = displayname;
@@ -216,7 +221,7 @@ public class ItemBuilder {
      */
     public ItemBuilder lore(String line) {
         Validate.notNull(line, "The Line is null.");
-        if (replaceAnd)
+        if (andSymbol)
             lore.add(ChatColor.translateAlternateColorCodes('&', line));
         else
             lore.add(line);
@@ -241,7 +246,7 @@ public class ItemBuilder {
     public ItemBuilder lores(String... lines) {
         Validate.notNull(lines, "The Lines are null.");
         for (String line : lines) {
-            if (replaceAnd) {
+            if (andSymbol) {
                 lore.add(ChatColor.translateAlternateColorCodes('&', line));
             } else {
                 lore.add(line);
@@ -258,7 +263,7 @@ public class ItemBuilder {
      */
     public ItemBuilder lore(String line, int count) {
         Validate.notNull(line, "The Line is null.");
-        if (replaceAnd)
+        if (andSymbol)
             lore.set(count, ChatColor.translateAlternateColorCodes('&', line));
         else
             lore.set(count, line);
@@ -324,8 +329,8 @@ public class ItemBuilder {
     public Unsafe unsafe() {
         return new Unsafe(this);
     }
-    
-        /**
+
+    /**
      * Toggles the replace of the ampersand (&) symbol to the section sign (§) symbol
      * @author Kev575
      */
@@ -333,7 +338,7 @@ public class ItemBuilder {
         replaceAndSymbol(!andSymbol);
         return this;
     }
-    
+
     /**
      * Enables / disables the replace of the ampersand (&) symbol to the section sign (§) symbol
      * @author Kev575
