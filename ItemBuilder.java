@@ -303,7 +303,7 @@ public class ItemBuilder {
      * Makes the Item Glow
      */
     public ItemBuilder glow() {
-        enchant(Enchantment.ARROW_INFINITE, 10);
+        enchant(material != Material.BOW ? Enchantment.ARROW_INFINITE : Enchantment.LUCK, 10);
         flag(ItemFlag.HIDE_ENCHANTS);
         return this;
     }
