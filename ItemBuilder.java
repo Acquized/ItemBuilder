@@ -611,7 +611,6 @@ public class ItemBuilder {
                 return null;
             }
 
-            @SuppressWarnings("unchecked")
             public Object getItemAsNMSStack(ItemStack item) {
                 try {
                     Method m = getCraftItemStackClass().getMethod("asNMSCopy", ItemStack.class);
@@ -620,7 +619,6 @@ public class ItemBuilder {
                 return null;
             }
 
-            @SuppressWarnings("unchecked")
             public ItemStack getItemAsBukkitStack(Object nmsStack) {
                 try {
                     Method m = getCraftItemStackClass().getMethod("asCraftMirror", nmsStack.getClass());
@@ -629,7 +627,7 @@ public class ItemBuilder {
                 return null;
             }
 
-            public Class getCraftItemStackClass() {
+            public Class<?> getCraftItemStackClass() {
                 String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
                 try {
                     return Class.forName("org.bukkit.craftbukkit." + ver + ".inventory.CraftItemStack");
