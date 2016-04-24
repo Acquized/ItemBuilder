@@ -41,7 +41,8 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material) {
-        Validate.notNull(material, "The Material is null.");
+        if (material == null)
+            material = Material.AIR;
         this.item = new ItemStack(material);
         this.material = material;
     }
@@ -52,7 +53,8 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material, int amount) {
-        Validate.notNull(material, "The Material is null.");
+        if (material == null)
+            material = Material.AIR;
         this.item = new ItemStack(material, amount);
         this.material = material;
         this.amount = amount;
@@ -64,7 +66,8 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material, int amount, String displayname) {
-        Validate.notNull(material, "The Material is null.");
+        if (material == null)
+            material = Material.AIR;
         Validate.notNull(displayname, "The Displayname is null.");
         this.item = new ItemStack(material, amount);
         this.material = material;
@@ -77,7 +80,8 @@ public class ItemBuilder {
      * @see Material
      */
     public ItemBuilder(Material material, String displayname) {
-        Validate.notNull(material, "The Material is null.");
+        if (material == null)
+            material = Material.AIR;
         Validate.notNull(displayname, "The Displayname is null.");
         this.item = new ItemStack(material);
         this.material = material;
@@ -91,14 +95,18 @@ public class ItemBuilder {
     public ItemBuilder(ItemStack item) {
         Validate.notNull(item, "The Item is null.");
         this.item = item;
-        this.meta = item.getItemMeta();
+        if (item.hasItemMeta())
+            this.meta = item.getItemMeta();
         this.material = item.getType();
         this.amount = item.getAmount();
         this.data = item.getData();
         this.damage = item.getDurability();
         this.enchantments = item.getEnchantments();
-        this.displayname = item.getItemMeta().getDisplayName();
-        this.lore = item.getItemMeta().getLore();
+        if (item.hasItemMeta())
+            this.displayname = item.getItemMeta().getDisplayName();
+        if (item.hasItemMeta())
+            this.lore = item.getItemMeta().getLore();
+        if (item.hasItemMeta())
         for(ItemFlag f : item.getItemMeta().getItemFlags()) {
             flags.add(f);
         }
@@ -167,7 +175,7 @@ public class ItemBuilder {
      * @param material (Material)
      */
     public ItemBuilder material(Material material) {
-        Validate.notNull(material, "The Mater is null.");
+        Validate.notNull(material, "The Material is null.");
         this.material = material;
         return this;
     }
@@ -197,7 +205,7 @@ public class ItemBuilder {
      * @param enchantments (Map<Enchantment, Integer> )
      */
     public ItemBuilder enchant(Map<Enchantment, Integer> enchantments) {
-        Validate.notNull(enchantments, "The Enchantments is null.");
+        Validate.notNull(enchantments, "The Enchantments are null.");
         this.enchantments = enchantments;
         return this;
     }
@@ -233,7 +241,7 @@ public class ItemBuilder {
      * @param lore (List<String>)
      */
     public ItemBuilder lore(List<String> lore) {
-        Validate.notNull(lore, "The Lore is null.");
+        Validate.notNull(lore, "The Lores are null.");
         this.lore = lore;
         return this;
     }
@@ -603,7 +611,6 @@ public class ItemBuilder {
                 return null;
             }
 
-            @SuppressWarnings("unchecked")
             public Object getItemAsNMSStack(ItemStack item) {
                 try {
                     Method m = getCraftItemStackClass().getMethod("asNMSCopy", ItemStack.class);
@@ -612,7 +619,6 @@ public class ItemBuilder {
                 return null;
             }
 
-            @SuppressWarnings("unchecked")
             public ItemStack getItemAsBukkitStack(Object nmsStack) {
                 try {
                     Method m = getCraftItemStackClass().getMethod("asCraftMirror", nmsStack.getClass());
@@ -621,7 +627,7 @@ public class ItemBuilder {
                 return null;
             }
 
-            public Class getCraftItemStackClass() {
+            public Class<?> getCraftItemStackClass() {
                 String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
                 try {
                     return Class.forName("org.bukkit.craftbukkit." + ver + ".inventory.CraftItemStack");
