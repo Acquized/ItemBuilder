@@ -4,6 +4,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +20,7 @@ import java.util.*;
  * @author Acquized (Main Methods & NBT)
  * @author Kev575 (More Constructors & a few Methods)
  * @see ItemStack
- * @version 1.7.1
+ * @version 1.7.4
  */
 public class ItemBuilder {
 
@@ -116,6 +117,13 @@ public class ItemBuilder {
             for(ItemFlag f : item.getItemMeta().getItemFlags()) {
                 flags.add(f);
             }
+    }
+
+    /**
+     * Initials the ItemBuilder with a ItemStack from a Config
+     */
+    public ItemBuilder(FileConfiguration cfg, String path) {
+        this(cfg.getItemStack(path));
     }
 
     /**
@@ -430,6 +438,23 @@ public class ItemBuilder {
     }
 
     /**
+     * Writes the ItemStack to the path in the Configuration cfg
+     * @author Acquized
+     */
+    public ItemBuilder toConfig(FileConfiguration cfg, String path) {
+        cfg.set(path, build());
+        return this;
+    }
+
+    /**
+     * Gets the ItemStack from the Path in Configuration cfg and returns a new ItemBuilder Object
+     * @author Acquized
+     */
+    public ItemBuilder fromConfig(FileConfiguration cfg, String path) {
+        return new ItemBuilder(cfg, path);
+    }
+
+    /**
      * Builds the ItemStack and returns it
      * @return (ItemStack)
      */
@@ -551,6 +576,10 @@ public class ItemBuilder {
             return builder;
         }
 
+        /**
+         * This Class contains Code that, when you edit it, may completly mess up the Class.
+         * So, don't edit this unless you 100% know what you do.
+         */
         public class ReflectionUtils {
 
             public String getString(ItemStack item, String key) {
@@ -660,7 +689,6 @@ public class ItemBuilder {
                 return false;
             }
 
-            /** <!-- UNSAFE METHODS (DO NOT USE!) !--> **/
             public Object getNewNBTTagCompound() {
                 String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
                 try {
