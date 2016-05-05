@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
@@ -75,7 +74,7 @@ public class ItemBuilder {
         this.item = new ItemStack(material, amount);
         this.material = material;
         this.amount = amount;
-         if (amount > 64 || amount < 64)
+        if (amount > 64 || amount < 64)
             this.amount = 1;
         else
             this.amount = amount;
@@ -114,9 +113,9 @@ public class ItemBuilder {
         if (item.hasItemMeta())
             this.lore = item.getItemMeta().getLore();
         if (item.hasItemMeta())
-        for(ItemFlag f : item.getItemMeta().getItemFlags()) {
-            flags.add(f);
-        }
+            for(ItemFlag f : item.getItemMeta().getItemFlags()) {
+                flags.add(f);
+            }
     }
 
     /**
@@ -365,7 +364,7 @@ public class ItemBuilder {
         andSymbol = replace;
         return this;
     }
-    
+
     /**
      * Gives you the displayname
      * @author Kev575
@@ -373,7 +372,7 @@ public class ItemBuilder {
     public String getDisplayname() {
         return displayname;
     }
-    
+
     /**
      * Gives you the amount
      * @author Kev575
@@ -381,7 +380,7 @@ public class ItemBuilder {
     public int getAmount() {
         return amount;
     }
-    
+
     /**
      * Gives you the enchantments
      * @author Kev575
@@ -389,46 +388,46 @@ public class ItemBuilder {
     public Map<Enchantment, Integer> getEnchantments() {
         return enchantments;
     }
-	
-	/**
+
+    /**
      * Gives you the damage
      * @author Kev575
-	 */
-	public short getDamage() {
-		return damage;
-	}
-	
-	/**
+     */
+    public short getDamage() {
+        return damage;
+    }
+
+    /**
      * Gives you the lores
      * @author Kev575
-	 */
-	public ArrayList<String> getLores() {
-		return lore;
-	}
-	
-	/**
+     */
+    public List<String> getLores() {
+        return lore;
+    }
+
+    /**
      * Gives you the replacement of the & (and) symbol
      * @author Kev575
-	 */
-	public boolean getAndSymbol() {
-		return andSymbol;
-	}
+     */
+    public boolean getAndSymbol() {
+        return andSymbol;
+    }
 
-	/**
+    /**
      * Gives you the flags
      * @author Kev575
-	 */
-	public ArrayList<ItemFlag> getFlags() {
-		return flags;
-	}
-	
-	/**
+     */
+    public List<ItemFlag> getFlags() {
+        return flags;
+    }
+
+    /**
      * Gives you the material
      * @author Kev575
-	 */
-	public Material getMaterial() {
-		return material;
-	}
+     */
+    public Material getMaterial() {
+        return material;
+    }
 
     /**
      * Builds the ItemStack and returns it
