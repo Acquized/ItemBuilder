@@ -4,6 +4,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +20,7 @@ import java.util.*;
  * @author Acquized (Main Methods & NBT)
  * @author Kev575 (More Constructors & a few Methods)
  * @see ItemStack
- * @version 1.7.1
+ * @version 1.7.4
  */
 public class ItemBuilder {
 
@@ -33,7 +34,9 @@ public class ItemBuilder {
     private String displayname;
     private List<String> lore = new ArrayList<>();
     private List<ItemFlag> flags = new ArrayList<>();
+
     private boolean andSymbol = true;
+    private boolean unsafeStackSize = false;
 
     /**
      * Initials the ItemBuilder with the Material
@@ -54,10 +57,8 @@ public class ItemBuilder {
     public ItemBuilder(Material material, int amount) {
         if (material == null)
             material = Material.AIR;
-        if (amount > 64 || amount < 64)
-            this.amount = 1;
-        else
-            this.amount = amount;
+        if(((amount > material.getMaxStackSize()) || (amount <= 0)) && (!unsafeStackSize)) amount = 1;
+        this.amount = amount;
         this.item = new ItemStack(material, amount);
         this.material = material;
     }
@@ -73,11 +74,8 @@ public class ItemBuilder {
         Validate.notNull(displayname, "The Displayname is null.");
         this.item = new ItemStack(material, amount);
         this.material = material;
+        if(((amount > material.getMaxStackSize()) || (amount <= 0)) && (!unsafeStackSize)) amount = 1;
         this.amount = amount;
-        if (amount > 64 || amount < 64)
-            this.amount = 1;
-        else
-            this.amount = amount;
         this.displayname = displayname;
     }
 
@@ -119,6 +117,13 @@ public class ItemBuilder {
     }
 
     /**
+     * Initials the ItemBuilder with a ItemStack from a Config
+     */
+    public ItemBuilder(FileConfiguration cfg, String path) {
+        this(cfg.getItemStack(path));
+    }
+
+    /**
      * Initials the ItemBuilder with an already existing instance of the ItemBuilder
      * @see ItemBuilder
      */
@@ -142,9 +147,7 @@ public class ItemBuilder {
      * @param amount (Integer)
      */
     public ItemBuilder amount(int amount) {
-        if (amount > 64 || amount < 64) {
-            return this;
-        }
+        if(((amount > material.getMaxStackSize()) || (amount <= 0)) && (!unsafeStackSize)) amount = 1;
         this.amount = amount;
         return this;
     }
@@ -366,6 +369,24 @@ public class ItemBuilder {
     }
 
     /**
+     * Allows / Disallows Unsafe Stack Sizes (Stacks that are over the max limit)
+     * @author Acquized
+     */
+    public ItemBuilder unsafeStackSize(boolean allow) {
+        this.unsafeStackSize = allow;
+        return this;
+    }
+
+    /**
+     * Toggles Unsafe Stack Sizes (Stacks that are over the max limit)
+     * @author Acquized
+     */
+    public ItemBuilder toggleUnsafeStackSize() {
+        unsafeStackSize(!unsafeStackSize);
+        return this;
+    }
+
+    /**
      * Gives you the displayname
      * @author Kev575
      */
@@ -551,6 +572,10 @@ public class ItemBuilder {
             return builder;
         }
 
+        /**
+         * This Class contains Code that, when you edit it, may completly mess up the Class.
+         * So, don't edit this unless you 100% know what you do.
+         */
         public class ReflectionUtils {
 
             public String getString(ItemStack item, String key) {
@@ -660,7 +685,6 @@ public class ItemBuilder {
                 return false;
             }
 
-            /** <!-- UNSAFE METHODS (DO NOT USE!) !--> **/
             public Object getNewNBTTagCompound() {
                 String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
                 try {
