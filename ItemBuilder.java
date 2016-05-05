@@ -55,9 +55,12 @@ public class ItemBuilder {
     public ItemBuilder(Material material, int amount) {
         if (material == null)
             material = Material.AIR;
+        if (amount > 64 || amount < 64)
+            this.amount = 1;
+        else
+            this.amount = amount;
         this.item = new ItemStack(material, amount);
         this.material = material;
-        this.amount = amount;
     }
 
     /**
@@ -72,6 +75,10 @@ public class ItemBuilder {
         this.item = new ItemStack(material, amount);
         this.material = material;
         this.amount = amount;
+         if (amount > 64 || amount < 64)
+            this.amount = 1;
+        else
+            this.amount = amount;
         this.displayname = displayname;
     }
 
@@ -136,6 +143,9 @@ public class ItemBuilder {
      * @param amount (Integer)
      */
     public ItemBuilder amount(int amount) {
+        if (amount > 64 || amount < 64) {
+            return this;
+        }
         this.amount = amount;
         return this;
     }
@@ -355,6 +365,70 @@ public class ItemBuilder {
         andSymbol = replace;
         return this;
     }
+    
+    /**
+     * Gives you the displayname
+     * @author Kev575
+     */
+    public String getDisplayname() {
+        return displayname;
+    }
+    
+    /**
+     * Gives you the amount
+     * @author Kev575
+     */
+    public int getAmount() {
+        return amount;
+    }
+    
+    /**
+     * Gives you the enchantments
+     * @author Kev575
+     */
+    public Map<Enchantment, Integer> getEnchantments() {
+        return enchantments;
+    }
+	
+	/**
+     * Gives you the damage
+     * @author Kev575
+	 */
+	public short getDamage() {
+		return damage;
+	}
+	
+	/**
+     * Gives you the lores
+     * @author Kev575
+	 */
+	public ArrayList<String> getLores() {
+		return lore;
+	}
+	
+	/**
+     * Gives you the replacement of the & (and) symbol
+     * @author Kev575
+	 */
+	public boolean getAndSymbol() {
+		return andSymbol;
+	}
+
+	/**
+     * Gives you the flags
+     * @author Kev575
+	 */
+	public ArrayList<ItemFlag> getFlags() {
+		return flags;
+	}
+	
+	/**
+     * Gives you the material
+     * @author Kev575
+	 */
+	public Material getMaterial() {
+		return material;
+	}
 
     /**
      * Builds the ItemStack and returns it
