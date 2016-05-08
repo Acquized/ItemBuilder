@@ -1,5 +1,13 @@
 package cc.acquized.itembuilder;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,12 +16,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
+import com.google.gson.Gson;
 
 /**
  * ItemBuilder API for creating ItemStacks easy with just 1 line of code
@@ -436,7 +443,15 @@ public class ItemBuilder {
     public Material getMaterial() {
         return material;
     }
-
+    
+    /**
+     * Gives you the {@link ItemMeta} of the {@link ItemStack}
+     * @author Kev575
+     */
+    public ItemMeta getMeta() {
+		return meta;
+	}
+    
     /**
      * Writes the ItemStack to the path in the Configuration cfg
      * @author Acquized
@@ -452,6 +467,58 @@ public class ItemBuilder {
      */
     public ItemBuilder fromConfig(FileConfiguration cfg, String path) {
         return new ItemBuilder(cfg, path);
+    }
+    
+    /**
+     * Returns the builder as json string
+     * @author Kev575
+     */
+    public String toJson() {
+    	return new Gson().toJson(this);
+    }
+    
+    /**
+     * Returns the builder as json string in a static way
+     * @author Kev575
+     */
+    public static String toJson(ItemBuilder builder) {
+    	return new Gson().toJson(builder);
+    }
+    
+    /**
+     * @return ItemBuilder created out of the @param json  
+     * @author Kev575
+     */
+    public static ItemBuilder fromJson(String json) {
+    	return new Gson().fromJson(json, ItemBuilder.class);
+    }
+    
+    /**
+     * Applys the json to this.
+     * @return this or if (overwrite) {@link ItemBuilder#fromJson(String)}
+     * @author Kev575
+     */
+    public ItemBuilder applyJson(String json, boolean overwrite) {
+    	ItemBuilder b = new Gson().fromJson(json, ItemBuilder.class);
+    	if (overwrite)
+    		return b;
+    	if (b.displayname != null)
+    		displayname = b.displayname;
+    	if (b.data != null)
+    		data = b.data;
+    	if (b.material != null)
+    		material = b.material;
+    	if (b.lore != null)
+    		lore = b.lore;
+    	if (b.enchantments != null)
+    		enchantments = b.enchantments;
+    	if (b.item != null)
+    		item = b.item;
+    	if (b.flags != null)
+    		flags = b.flags;
+    	damage = b.damage;
+    	amount = b.amount;
+    	return this;
     }
 
     /**
