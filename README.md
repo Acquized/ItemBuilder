@@ -13,3 +13,6 @@ You can also do all steps in just one line: `ItemStack item = new ItemBuilder(Ma
 3. Add/Remove NBT Tags using `builder.unsafe().addString("Key", "Value");` or `builder.unsafe().removeString("Key", "Value");`
 4. Go back to the ItemBuilder Class using the `builder();` Method in `Unsafe` and `build();` the ItemStack.  
 You can also do all steps in just one line: `ItemStack item = new ItemBuilder(Material.DIAMOND_SWORD).unsafe().addString("Key", "Value").builder().build();`  
+  
+* [JavaDocs](http://acquized.pw/docs/ItemBuilder/)
+* [Spigot Page](https://www.spigotmc.org/resources/itembuilder.16786/)
