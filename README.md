@@ -12,7 +12,28 @@ You can also do all steps in just one line: `ItemStack item = new ItemBuilder(Ma
 2. Access the `Unsafe` Class using the `builder.unsafe();` Method
 3. Add/Remove NBT Tags using `builder.unsafe().addString("Key", "Value");` or `builder.unsafe().removeString("Key", "Value");`
 4. Go back to the ItemBuilder Class using the `builder();` Method in `Unsafe` and `build();` the ItemStack.  
-You can also do all steps in just one line: `ItemStack item = new ItemBuilder(Material.DIAMOND_SWORD).unsafe().addString("Key", "Value").builder().build();`  
+You can also do all steps in just one line: `ItemStack item = new ItemBuilder(Material.DIAMOND_SWORD).unsafe().addString("Key", "Value").builder().build();` 
+
+## Maven
+Repository:  
+```xml
+<repositories>
+    <repository>
+        <id>acquized-repo</id>
+        <url>http://repo.acquized.pw/maven/</url>
+    </repository>
+</repositories>
+```  
+Dependency:
+```xml
+<dependencies>
+    <dependency>
+        <groupId>cc.acquized</groupId>
+        <artifactId>ItemBuilder</artifactId>
+        <version>1.8</version>
+    </dependency>
+</dependencies>
+```
   
 * [JavaDocs](http://acquized.pw/docs/ItemBuilder/)
 * [Spigot Page](https://www.spigotmc.org/resources/itembuilder.16786/)
