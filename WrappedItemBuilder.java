@@ -70,12 +70,18 @@ public class WrappedItemBuilder extends ItemBuilder {
         private ReflectionUtils utils = new ReflectionUtils();
 
         public AttributeWIP(WrappedItemBuilder builder) {
+            Validate.notNull(builder, "The builder is null.");
             this.nmsItem = utils.getItemAsNMSStack(builder.build());
             this.modifiers = utils.getNewNBTTagList();
         }
 
         /* TODO: Maybe move this to a different subclass  */
         public WrappedItemBuilder.AttributeWIP addAttribute(Attribute attribute, String name, Slot slot, int operation, double amount, UUID identifier) {
+            if (identifier == null)
+                identifier = UUID.randomUUID();
+            Validate.notNull(attribute, "Attribute is null.");
+            Validate.notNull(name, "Name is null.");
+            Validate.notNull(slot, "Slot is null.");
             try {
                 Object data = utils.getNewNBTTagCompound();
                 data.getClass().getMethod("setString", new Class[]{ String.class, String.class }).invoke(data, "AttributeName", attribute);
@@ -169,6 +175,8 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
 
             public Object setNBTTag(Object tag, Object item) {
+                Validate.notNull(tag, "The tag is null");
+                // not Validate.notNull(item, "The item is null"); because item is allowed to be null i guess
                 try {
                     item.getClass().getMethod("setTag", item.getClass()).invoke(item, tag);
                     return item;
@@ -179,6 +187,7 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
 
             public Object getNBTTagCompound(Object nmsStack) {
+                Validate.notNull(nmsStack, "The nmsStack is null");
                 try {
                     return nmsStack.getClass().getMethod("getTag").invoke(nmsStack);
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
@@ -188,6 +197,7 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
 
             public Object getItemAsNMSStack(ItemStack item) {
+                Validate.notNull(item, "The item is null");
                 try {
                     Method m = getCraftItemStackClass().getMethod("asNMSCopy", ItemStack.class);
                     return m.invoke(getCraftItemStackClass(), item);
@@ -198,6 +208,7 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
 
             public ItemStack getItemAsBukkitStack(Object nmsStack) {
+                Validate.notNull(nmsStack, "The nmsStack is null");
                 try {
                     Method m = getCraftItemStackClass().getMethod("asCraftMirror", nmsStack.getClass());
                     return (ItemStack) m.invoke(getCraftItemStackClass(), nmsStack);
