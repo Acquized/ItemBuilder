@@ -17,10 +17,13 @@
 package cc.acquized.itembuilder.nms;
 
 import cc.acquized.itembuilder.original.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class WrappedItemBuilder extends ItemBuilder {
@@ -49,7 +52,6 @@ public class WrappedItemBuilder extends ItemBuilder {
         super(cfg, path);
     }
 
-    @SuppressWarnings("deprecation")
     @Deprecated
     public WrappedItemBuilder(ItemBuilder builder) {
         super(builder);
@@ -63,20 +65,40 @@ public class WrappedItemBuilder extends ItemBuilder {
 
     public static class AttributeWIP {
 
-        private WrappedItemBuilder builder;
+        private Object nmsItem;
+        private Object modifiers;
+        private ReflectionUtils utils = new ReflectionUtils();
 
         public AttributeWIP(WrappedItemBuilder builder) {
-            this.builder = builder;
+            this.nmsItem = utils.getItemAsNMSStack(builder.build());
+            this.modifiers = utils.getNewNBTTagList();
         }
 
         /* TODO: Maybe move this to a different subclass  */
         public WrappedItemBuilder.AttributeWIP addAttribute(Attribute attribute, String name, Slot slot, int operation, double amount, UUID identifier) {
-
+            try {
+                Object data = utils.getNewNBTTagCompound();
+                data.getClass().getMethod("setString", new Class[]{ String.class, String.class }).invoke(data, "AttributeName", attribute);
+                data.getClass().getMethod("setString", new Class[]{ String.class, String.class }).invoke(data, "Name", name);
+                data.getClass().getMethod("setString", new Class[]{ String.class, String.class }).invoke(data, "Slot", slot);
+                data.getClass().getMethod("setInt", new Class[]{ String.class, Integer.class }).invoke(data, "Operation", operation);
+                data.getClass().getMethod("setDouble", new Class[]{ String.class, Double.class }).invoke(data, "Amount", amount);
+                data.getClass().getMethod("setLong", new Class[]{ String.class, Long.class }).invoke(data, "UUIDMost", identifier.getMostSignificantBits());
+                data.getClass().getMethod("setLong", new Class[]{ String.class, Long.class }).invoke(data, "UUIDLeast", identifier.getLeastSignificantBits());
+                modifiers.getClass().getMethod("add", utils.getNBTTagListClass()).invoke(modifiers, data);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+                ex.printStackTrace();
+            }
             return this;
         }
 
         public WrappedItemBuilder builder() {
-            return builder;
+            try {
+                nmsItem.getClass().getMethod("a", new Class[]{ String.class, utils.getNBTBaseClass() }).invoke(nmsItem, "AttributeModifiers", modifiers);
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
+                ex.printStackTrace();
+            }
+            return new WrappedItemBuilder(utils.getItemAsBukkitStack(nmsItem));
         }
 
         public enum Attribute {
@@ -124,6 +146,100 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
         }
 
+        public class ReflectionUtils {
+
+            public Object getNewNBTTagCompound() {
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                try {
+                    return Class.forName("net.minecraft.server." + ver + ".NBTTagCompound").newInstance();
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            public Object getNewNBTTagList() {
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                try {
+                    return Class.forName("net.minecraft.server." + ver + ".NBTTagList").newInstance();
+                } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            public Object setNBTTag(Object tag, Object item) {
+                try {
+                    item.getClass().getMethod("setTag", item.getClass()).invoke(item, tag);
+                    return item;
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            public Object getNBTTagCompound(Object nmsStack) {
+                try {
+                    return nmsStack.getClass().getMethod("getTag").invoke(nmsStack);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            public Object getItemAsNMSStack(ItemStack item) {
+                try {
+                    Method m = getCraftItemStackClass().getMethod("asNMSCopy", ItemStack.class);
+                    return m.invoke(getCraftItemStackClass(), item);
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            public ItemStack getItemAsBukkitStack(Object nmsStack) {
+                try {
+                    Method m = getCraftItemStackClass().getMethod("asCraftMirror", nmsStack.getClass());
+                    return (ItemStack) m.invoke(getCraftItemStackClass(), nmsStack);
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            public Class<?> getCraftItemStackClass() {
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                try {
+                    return Class.forName("org.bukkit.craftbukkit." + ver + ".inventory.CraftItemStack");
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            public Class<?> getNBTTagListClass() {
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                try {
+                    return Class.forName("net.minecraft.server." + ver + ".NBTTagList");
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+            public Class<?> getNBTBaseClass() {
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                try {
+                    return Class.forName("net.minecraft.server." + ver + ".NBTBase");
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
+
+        }
+
     }
 
 }
+
