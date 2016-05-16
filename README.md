@@ -1,7 +1,7 @@
 # ItemBuilder
 Create advanced ItemStacks with just one line of code.  
   
-### Standart ItemBuilder API Usage
+### Standard ItemBuilder API Usage
 1. Create a Instance of the ItemBuilder: `ItemBuilder builder = new ItemBuilder(Material.GLOWSTONE);`  
 2. Modify the ItemStack using one of the many methods, for example: `builder.displayname("§6ItemBuiler Glowstone");`  
 3. When you are finish modifing it, use `builder.build();` to get the Bukkit ItemStack back  
@@ -16,9 +16,10 @@ You can also do all steps in just one line: `ItemStack item = new ItemBuilder(Ma
   
 ### Json and Config Writing / Reading (Advanced)
 1. Create a Instance of the ItemBuilder and set anything you need.
-2. Convert it to a JSON String using `builder.toJson()` or to a Config Path using `builder.toConfig(MyPlugin.getInstance().getConfig(), "my.custom.item").
+2. Convert it to a JSON String using `builder.toJson()` or to a Config Path using `builder.toConfig(MyPlugin.getInstance().getConfig(), "my.custom.item").`
 3. TIP! The Methods `fromJson`, `toJson`, `fromConfig` and `toConfig` are static. You can access them all using `ItemBuilder.<Method>` without creating a Instance of the ItemBuilder.
-  
+4. Another TIP! The second method `toJson` is not static so you can access them `your_builder.toJson()`.
+
 ## Maven
 Repository:  
 ```xml
