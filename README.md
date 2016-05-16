@@ -16,7 +16,7 @@ You can also do all steps in just one line: `ItemStack item = new ItemBuilder(Ma
   
 ### Json and Config Writing / Reading (Advanced)
 1. Create a Instance of the ItemBuilder and set anything you need.
-2. Convert it to a JSON String using `builder.toJson()` or to a Config Path using `builder.toConfig(MyPlugin.getInstance().getConfig(), "my.custom.item").
+2. Convert it to a JSON String using `builder.toJson()` or to a Config Path using `builder.toConfig(MyPlugin.getInstance().getConfig(), "my.custom.item")`.
 3. TIP! The Methods `fromJson`, `toJson`, `fromConfig` and `toConfig` are static. You can access them all using `ItemBuilder.<Method>` without creating a Instance of the ItemBuilder.
   
 ## Maven
