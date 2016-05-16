@@ -155,7 +155,7 @@ public class WrappedItemBuilder extends ItemBuilder {
         public class ReflectionUtils {
 
             public Object getNewNBTTagCompound() {
-                String ver = Bukkit.getServer().getClass().getName().split("\\.")[3]
+                String ver = Bukkit.getServer().getClass().getName().split("\\.")[3];
                 try {
                     return Class.forName("net.minecraft.server." + ver + ".NBTTagCompound").newInstance();
                 } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
@@ -165,7 +165,7 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
 
             public Object getNewNBTTagList() {
-                Bukkit.getServer().getClass().getName().split("\\.")[3]
+                Bukkit.getServer().getClass().getName().split("\\.")[3];
                 try {
                     return Class.forName("net.minecraft.server." + ver + ".NBTTagList").newInstance();
                 } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
@@ -219,7 +219,7 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
 
             public Class<?> getCraftItemStackClass() {
-                String ver = Bukkit.getServer().getClass().getName().split("\\.")[3]
+                String ver = Bukkit.getServer().getClass().getName().split("\\.")[3];
                 try {
                     return Class.forName("org.bukkit.craftbukkit." + ver + ".inventory.CraftItemStack");
                 } catch (ClassNotFoundException ex) {
@@ -229,7 +229,7 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
 
             public Class<?> getNBTTagListClass() {
-                String ver = Bukkit.getServer().getClass().getName().split("\\.")[3]
+                String ver = Bukkit.getServer().getClass().getName().split("\\.")[3];
                 try {
                     return Class.forName("net.minecraft.server." + ver + ".NBTTagList");
                 } catch (ClassNotFoundException ex) {
@@ -239,7 +239,7 @@ public class WrappedItemBuilder extends ItemBuilder {
             }
 
             public Class<?> getNBTBaseClass() {
-                String ver = Bukkit.getServer().getClass().getName().split("\\.")[3]
+                String ver = Bukkit.getServer().getClass().getName().split("\\.")[3];
                 try {
                     return Class.forName("net.minecraft.server." + ver + ".NBTBase");
                 } catch (ClassNotFoundException ex) {
