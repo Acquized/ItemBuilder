@@ -502,6 +502,30 @@ public class ItemBuilder {
         return new Gson().fromJson(json, ItemBuilder.class);
     }
 
+    public boolean hasMeta() {
+        return meta != null;
+    }
+
+    public boolean hasData() {
+        return data != null;
+    }
+
+    public boolean hasEnchantments() {
+        return !enchantments.isEmpty();
+    }
+
+    public boolean hasDisplayname() {
+        return displayname != null;
+    }
+
+    public boolean hasLore() {
+        return !lore.isEmpty();
+    }
+
+    public boolean hasFlags() {
+        return !flags.isEmpty();
+    }
+
     /**
      * Applies the currently ItemBuilder to the JSONItemBuilder
      * @param json Already existing JsonItemBuilder
