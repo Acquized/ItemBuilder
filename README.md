@@ -1,6 +1,12 @@
 # ItemBuilder
 Create advanced ItemStacks with just one line of code.  
   
+### How to use the Lombok ItemBuilder
+1. `LombokItemBuilder.builder()`
+2. Set any Methods you want like `amount()` etc.
+3. Access the Original ItemBuilder using `build()`
+4. Build the ItemBuilder to a ItemStack using `build()` (Yes, 2x) 
+  
 ### Standart ItemBuilder API Usage
 1. Create a Instance of the ItemBuilder: `ItemBuilder builder = new ItemBuilder(Material.GLOWSTONE);`  
 2. Modify the ItemStack using one of the many methods, for example: `builder.displayname("§6ItemBuiler Glowstone");`  
