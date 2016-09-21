@@ -581,6 +581,46 @@ public class ItemBuilder {
         return item;
     }
 
+    public static class Static {
+
+        public static ItemStack itemMeta(ItemStack item, ItemMeta meta) {
+            return new ItemBuilder(item).meta(meta).build();
+        }
+
+        public static ItemStack itemMaterial(ItemStack item, Material material) {
+            return new ItemBuilder(item).material(material).build();
+        }
+
+        public static ItemStack itemAmount(ItemStack item, int amount) {
+            return new ItemBuilder(item).amount(amount).build();
+        }
+
+        public static ItemStack itemData(ItemStack item, MaterialData data) {
+            return new ItemBuilder(item).data(data).build();
+        }
+
+        public static ItemStack itemDurability(ItemStack item, short durability) {
+            return new ItemBuilder(item).durability(durability).build();
+        }
+
+        public static ItemStack itemEnchantments(ItemStack item, Map<Enchantment, Integer> enchants) {
+            return new ItemBuilder(item).enchant(enchants).build();
+        }
+
+        public static ItemStack itemDisplayName(ItemStack item, String displayname) {
+            return new ItemBuilder(item).displayname(displayname).build();
+        }
+
+        public static ItemStack itemLore(ItemStack item, List<String> lore) {
+            return new ItemBuilder(item).lore(lore).build();
+        }
+
+        public static ItemStack itemFlags(ItemStack item, List<ItemFlag> flags) {
+            return new ItemBuilder(item).flag(flags).build();
+        }
+
+    }
+
     /** Contains NBT Tags Methods */
     public class Unsafe {
 
