@@ -770,7 +770,7 @@ public class ItemBuilder {
             }
 
             public Object getNewNBTTagCompound() {
-                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 try {
                     return Class.forName("net.minecraft.server." + ver + ".NBTTagCompound").newInstance();
                 } catch (ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
@@ -781,7 +781,7 @@ public class ItemBuilder {
 
             public Object setNBTTag(Object tag, Object item) {
                 try {
-                    item.getClass().getMethod("setTag", item.getClass()).invoke(item, tag);
+                    item.getClass().getMethod("setTag", tag.getClass()).invoke(item, tag);
                     return item;
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
                     ex.printStackTrace();
@@ -819,7 +819,7 @@ public class ItemBuilder {
             }
 
             public Class<?> getCraftItemStackClass() {
-                String ver = Bukkit.getServer().getClass().getPackage().getName().split(".")[3];
+                String ver = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
                 try {
                     return Class.forName("org.bukkit.craftbukkit." + ver + ".inventory.CraftItemStack");
                 } catch (ClassNotFoundException ex) {
